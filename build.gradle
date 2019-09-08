@@ -39,13 +39,19 @@ dependencies {
   implementation "io.vertx:vertx-web:$vertxVersion"
   implementation "io.vertx:vertx-mysql-client:$vertxVersion"
   implementation "io.vertx:vertx-web-api-contract:$vertxVersion"
-// https://mvnrepository.com/artifact/io.vertx/vertx-mysql-postgresql-client-jasync
-  compile group: 'io.vertx', name: 'vertx-mysql-postgresql-client-jasync', version: '3.8.1'
-  compile 'com.github.jasync-sql:jasync-mysql:1.0.6'
-  compile 'com.github.jasync-sql:jasync-postgresql:1.0.6'
+  implementation "io.vertx:vertx-web-client:$vertxVersion"
+  implementation "io.vertx:vertx-config:$vertxVersion"
+  implementation "io.vertx:vertx-config-yaml:$vertxVersion"
   implementation "io.vertx:vertx-sql-common:$vertxVersion"
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
+  implementation "io.vertx:vertx-mysql-postgresql-client-jasync:$vertxVersion"
+  //compile group: 'io.vertx', name: 'vertx-mysql-postgresql-client-jasync', version: '3.8.1'
 
+
+  implementation 'com.github.jasync-sql:jasync-mysql:1.0.6'
+  implementation 'com.github.jasync-sql:jasync-postgresql:1.0.6'
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.26'
+  testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.1.0'
+  testImplementation("org.assertj:assertj-core:3.11.1")
   testImplementation "io.vertx:vertx-junit5:$vertxVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterEngineVersion"

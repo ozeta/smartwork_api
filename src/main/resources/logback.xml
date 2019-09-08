@@ -7,9 +7,10 @@
   </appender>
 
   <logger name="dev.oz.smartworkapi" level="debug"/>
-  <logger name="io.netty" level="debug"/>
+  <logger name="io.netty" level="error"/>
   <logger name="io.vertx" level="debug"/>
-  <logger name="io.swagger.v3" level="warn"/>
+  <logger name="io.swagger.v3" level="error"/>
+  <logger name="com.github.jasync.sql.db" level="error"/>
 
   <root level="debug">
     <appender-ref ref="STDOUT"/>

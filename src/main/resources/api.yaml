@@ -135,9 +135,9 @@ components:
         status:
           type: string
           enum:
-            - pending
-            - approved
-            - rejected
+            - PENDING
+            - APPROVED
+            - REJECTED
         approver:
           type: string
         id:

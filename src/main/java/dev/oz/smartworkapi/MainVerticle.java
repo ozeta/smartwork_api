@@ -1,7 +1,9 @@
 package dev.oz.smartworkapi;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import dev.oz.smartworkapi.openapi.RequestHandlerVerticle;
+import dev.oz.smartworkapi.openapi.RequestHttpServerVerticle;
+import dev.oz.smartworkapi.repository.RequestMysqlVerticle;
+import io.vertx.core.*;
 import io.vertx.core.http.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,22 +13,11 @@ public class MainVerticle extends AbstractVerticle {
   private static Logger logger = LoggerFactory.getLogger(MainVerticle.class);
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    server = vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(8888, http -> {
-      if (http.succeeded()) {
-        startPromise.complete();
-        logger.info("HTTP server started on port 8888");
-      } else {
-        startPromise.fail(http.cause());
-      }
-    });
+    ApplicationBootstrapper.start(startPromise);
   }
 
   @Override
   public void stop() {
-    this.server.close();
+    //vertx.undeploy();
   }
 }

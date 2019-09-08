@@ -137,7 +137,29 @@ public class RequestHandlerVerticle extends AbstractVerticle {
 
   static void putRequestById(RoutingContext rc) {
     JsonObject bodyAsJson = rc.getBodyAsJson();
-    eb.publish(EB_MYSQL_ASYN, JsonObject.mapFrom(bodyAsJson), deliveryOptions(Event.Action.PUT.name()));
+
+    eb.<JsonObject>request(EB_MYSQL_ASYN, JsonObject.mapFrom(bodyAsJson), deliveryOptions(Event.Action.POST.name()), reply -> {
+      if (reply.succeeded()) {
+        int CREATED = 201;
+        logger.info("Object Found");
+        JsonObject body = reply.result().body();
+        Response<Request> httpResponse = new Response<>(CREATED, "", Request.fromJson(body));
+        rc
+          .response()
+          .setStatusCode(CREATED)
+          .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .end(JsonObject.mapFrom(httpResponse).encode());
+      } else {
+        int ERROR = 400;
+        logger.info("Object not created");
+        Response<Void> httpResponse = new Response<>(ERROR, reply.cause().toString());
+        rc
+          .response()
+          .setStatusCode(ERROR)
+          .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+          .end(JsonObject.mapFrom(httpResponse).encode());
+      }
+    });
 
   }
 
@@ -145,6 +167,7 @@ public class RequestHandlerVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> future) {
     eb = vertx.eventBus();
+    future.complete();
   }
 
   @Override

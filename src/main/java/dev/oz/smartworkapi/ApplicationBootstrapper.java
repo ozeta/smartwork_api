@@ -5,65 +5,48 @@ import dev.oz.smartworkapi.openapi.RequestHttpServerVerticle;
 import dev.oz.smartworkapi.repository.RequestMysqlVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
+import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ApplicationBootstrapper {
-  public static void main(String[] args) {
-    Vertx vertx = Vertx.vertx();
-    Future<String> steps = prepareDatabaseVerticle(vertx)
-      .compose(v -> startHttpVerticle(vertx))
-      .compose(v -> startHandlerVerticle(vertx));
+  private static Logger logger = LoggerFactory.getLogger(ApplicationBootstrapper.class);
 
+  public static void main(String[] args) {
+    start(Promise.promise());
+  }
+
+  static private Future<String> prepareVerticle(Vertx vertx, Verticle verticle) {
     Promise<String> promise = Promise.promise();
+    vertx.deployVerticle(verticle, res -> {
+      if (res.succeeded()) {
+        promise.complete(res.result());
+      } else {
+        promise.fail(res.cause());
+      }
+    });
+    return promise.future();
+  }
+
+  public static void start(Promise<Void> startPromise) {
+    Vertx vertx = Vertx.vertx();
+    Future<String> steps = prepareVerticle(vertx, new ConfigurationVerticle())
+      .compose(v -> prepareVerticle(vertx, new RequestMysqlVerticle()))
+      .compose(v -> prepareVerticle(vertx, new RequestHttpServerVerticle()))
+      .compose(v -> prepareVerticle(vertx, new RequestHandlerVerticle()));
 
     steps.setHandler(ar -> {
       if (ar.succeeded()) {
-        promise.complete();
-        System.out.println("Bootstrap complete");
+        logger.info("Promise Bootstrap complete \uD83D\uDEC2");
+        startPromise.complete();
       } else {
-        promise.fail(ar.cause());
-        System.out.println("Bootstrap failed");
-        System.out.println(ar.cause().toString());
+        logger.error("Bootstrap failed");
+        logger.error(ar.cause().toString());
+        startPromise.fail(ar.cause().toString());
       }
     });
-
-  }
-
-  static private Future<String> prepareDatabaseVerticle(Vertx vertx) {
-    Promise<String> promise = Promise.promise();
-    vertx.deployVerticle(new RequestMysqlVerticle(), res -> {
-      if (res.succeeded()) {
-        promise.complete(res.result());
-      } else {
-        promise.fail(res.cause());
-      }
-    });
-    return promise.future();
-  }
-
-  static private Future<String> startHttpVerticle(Vertx vertx) {
-    Promise<String> promise = Promise.promise();
-    vertx.deployVerticle(new RequestHttpServerVerticle(), res -> {
-      if (res.succeeded()) {
-        promise.complete(res.result());
-      } else {
-        promise.fail(res.cause());
-      }
-    });
-    return promise.future();
-  }
-
-  static private Future<String> startHandlerVerticle(Vertx vertx) {
-    Promise<String> promise = Promise.promise();
-    vertx.deployVerticle(new RequestHandlerVerticle(), res -> {
-      if (res.succeeded()) {
-        promise.complete(res.result());
-      } else {
-        promise.fail(res.cause());
-      }
-    });
-    return promise.future();
   }
 
 
