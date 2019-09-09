@@ -10,8 +10,14 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.MySQLClient;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class RequestMysqlVerticle extends AbstractVerticle {
+  private static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   private static String ebAddress = "smartworkapi.mysql";
   MessageConsumer<JsonObject> consumer;
   RequestRepository requestRepository;
@@ -48,11 +54,11 @@ public class RequestMysqlVerticle extends AbstractVerticle {
           });
           break;
         case "DELETE":
-         Future<Integer> deleted = requestRepository.deleteRequest(body.getInteger("id"));
+          Future<Integer> deleted = requestRepository.deleteRequest(body.getInteger("id"));
           deleted.setHandler(asyn -> {
             if (asyn.succeeded()) {
               Integer result = asyn.result();
-              message.reply(new JsonObject().put("deleted",result));
+              message.reply(new JsonObject().put("deleted", result));
             } else {
               message.fail(404, "object not found for id " + body.getInteger("id"));
             }

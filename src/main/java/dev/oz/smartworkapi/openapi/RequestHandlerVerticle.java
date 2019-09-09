@@ -13,13 +13,14 @@ import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class RequestHandlerVerticle extends AbstractVerticle {
 
   static EventBus eb;
-  private static Logger logger = LoggerFactory.getLogger(RequestHandlerVerticle.class);
+  private static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private static String EB_MYSQL_ASYN = "smartworkapi.mysql";
-  private static String EB_MYSQL_JDBC = "smartworkapi.mysql.jdbc";
 
   private static DeliveryOptions deliveryOptions(String action) {
     return new DeliveryOptions().addHeader("action", action);

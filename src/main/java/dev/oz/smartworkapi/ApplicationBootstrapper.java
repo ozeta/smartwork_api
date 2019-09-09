@@ -10,9 +10,14 @@ import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+import java.util.Set;
+
+import static java.lang.System.exit;
+
 
 public class ApplicationBootstrapper {
-  private static Logger logger = LoggerFactory.getLogger(ApplicationBootstrapper.class);
+  private static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static void main(String[] args) {
     start(Promise.promise());
@@ -32,7 +37,9 @@ public class ApplicationBootstrapper {
 
   public static void start(Promise<Void> startPromise) {
     Vertx vertx = Vertx.vertx();
-    Future<String> steps = prepareVerticle(vertx, new ConfigurationVerticle())
+    Future<String> steps =
+      //prepareVerticle(vertx, new ConfigurationVerticle())
+      prepareVerticle(vertx, new ConfigurationVerticle())
       .compose(v -> prepareVerticle(vertx, new RequestMysqlVerticle()))
       .compose(v -> prepareVerticle(vertx, new RequestHttpServerVerticle()))
       .compose(v -> prepareVerticle(vertx, new RequestHandlerVerticle()));
@@ -45,6 +52,12 @@ public class ApplicationBootstrapper {
         logger.error("Bootstrap failed");
         logger.error(ar.cause().toString());
         startPromise.fail(ar.cause().toString());
+        Set<String> strings = vertx.deploymentIDs();
+        strings.forEach(str->{
+          logger.info("UNdeploying verticle " + str);
+          vertx.undeploy(str);
+        });
+        exit(1);
       }
     });
   }
