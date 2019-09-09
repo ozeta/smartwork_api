@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  description: No description
+  version: 1.0.0
+  title: smartwork timesheet
+  contact: {}
+paths:
+  "/request/{request_id}":
+    get:
+      summary: get request by id
+      operationId: getRequestById
+      responses:
+        "200":
+          description: Status 200
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResponse"
+    put:
+      summary: update a request by id
+      operationId: putRequestById
+      requestBody:
+        $ref: "#/components/requestBodies/Request"
+      responses:
+        "200":
+          description: Status 200
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResponse"
+        "401":
+          description: Status 401
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResponse"
+        "500":
+          description: Status 500
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResponse"
+    delete:
+      summary: delete request by id
+      operationId: deleteRequestById
+      responses:
+        "200":
+          description: Status 200
+    parameters:
+      - name: request_id
+        in: path
+        required: true
+        schema:
+          type: string
+  "/request/user/{user_id}":
+    get:
+      operationId: getRequestByUser
+      responses:
+        "200":
+          description: Status 200
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Request"
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+  /request:
+    post:
+      summary: new smart work request
+      operationId: postRequest
+      requestBody:
+        $ref: "#/components/requestBodies/Request"
+      responses:
+        "200":
+          description: Status 200
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestResponse"
+        "400":
+          description: Status 400
+        "500":
+          description: Status 500
+  /team:
+    post:
+      summary: create new team
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Status 200
+  "/team/{team_id}":
+    get:
+      summary: get a team by id
+      responses:
+        "200":
+          description: Status 200
+    put:
+      summary: update team
+      responses:
+        "200":
+          description: Status 200
+    delete:
+      summary: delete team id
+      responses:
+        "200":
+          description: Status 200
+    parameters:
+      - name: team_id
+        in: path
+        required: true
+        schema:
+          type: string
+components:
+  requestBodies:
+    Request:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Request"
+      required: true
+  schemas:
+    Request:
+      type: object
+      properties:
+        user:
+          type: string
+        date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - PENDING
+            - APPROVED
+            - REJECTED
+        approver:
+          type: string
+        id:
+          type: integer
+    RequestResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        id:
+          type: string
+        message:
+          type: string
+    Team:
+      type: object
+      required:
+        - members
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        members:
+          type: array
+          items:
+            required:
+              - id
+            type: object
+            properties:
+              id:
+                type: integer
+              user:
+                type: string

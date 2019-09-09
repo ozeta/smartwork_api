@@ -1,0 +1,20 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="dev.oz.smartworkapi" level="debug"/>
+  <logger name="io.netty" level="error"/>
+  <logger name="io.vertx" level="debug"/>
+  <logger name="io.swagger.v3" level="error"/>
+  <logger name="com.github.jasync.sql.db" level="error"/>
+
+  <root level="debug">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>
+
