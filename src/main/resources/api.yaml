@@ -90,6 +90,12 @@ paths:
   /team:
     post:
       summary: create new team
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
       responses:
         "200":
           description: Status 200
@@ -131,7 +137,7 @@ components:
           type: string
         date:
           type: string
-          format: datetime
+          format: date-time
         status:
           type: string
           enum:
@@ -151,3 +157,23 @@ components:
           type: string
         message:
           type: string
+    Team:
+      type: object
+      required:
+        - members
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        members:
+          type: array
+          items:
+            required:
+              - id
+            type: object
+            properties:
+              id:
+                type: integer
+              user:
+                type: string
