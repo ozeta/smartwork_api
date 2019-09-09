@@ -80,6 +80,7 @@ public class RequestMysqlVerticle extends AbstractVerticle {
         startConsumer();
         future.complete();
       } else {
+        logger.error("Cannot connect to DB");
         future.fail(ar.cause());
       }
     });
