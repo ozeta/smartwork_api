@@ -11,10 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Set;
 
 import static java.lang.System.exit;
-
 
 public class ApplicationBootstrapper {
   private static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -24,7 +22,7 @@ public class ApplicationBootstrapper {
   }
 
   static private Future<String> prepareVerticle(Vertx vertx, Verticle verticle) {
-    Promise<String> promise = Promise.promise();
+    var promise = Promise.<String>promise();
     vertx.deployVerticle(verticle, res -> {
       if (res.succeeded()) {
         promise.complete(res.result());
@@ -35,14 +33,14 @@ public class ApplicationBootstrapper {
     return promise.future();
   }
 
-  public static void start(Promise<Void> startPromise) {
-    Vertx vertx = Vertx.vertx();
-    Future<String> steps =
+  public static void start(Promise<Void> startPromise, Vertx vertxInstance) {
+    var vertx = Vertx.vertx();
+    var steps =
       //prepareVerticle(vertx, new ConfigurationVerticle())
       prepareVerticle(vertx, new RequestMysqlVerticle())
-//      .compose(v -> prepareVerticle(vertx, new RequestMysqlVerticle()))
-      .compose(v -> prepareVerticle(vertx, new RequestHttpServerVerticle()))
-      .compose(v -> prepareVerticle(vertx, new RequestHandlerVerticle()));
+        //      .compose(v -> prepareVerticle(vertx, new RequestMysqlVerticle()))
+        .compose(v -> prepareVerticle(vertx, new RequestHttpServerVerticle()))
+        .compose(v -> prepareVerticle(vertx, new RequestHandlerVerticle()));
 
     steps.setHandler(ar -> {
       if (ar.succeeded()) {
@@ -52,8 +50,8 @@ public class ApplicationBootstrapper {
         logger.error("Bootstrap failed");
         logger.error(ar.cause().toString());
         startPromise.fail(ar.cause().toString());
-        Set<String> strings = vertx.deploymentIDs();
-        strings.forEach(str->{
+        var idList = vertx.deploymentIDs();
+        idList.forEach(str -> {
           logger.info("UNdeploying verticle " + str);
           vertx.undeploy(str);
         });
@@ -62,5 +60,9 @@ public class ApplicationBootstrapper {
     });
   }
 
+  public static void start(Promise<Void> startPromise) {
+    var vertx = Vertx.vertx();
+    start(startPromise, vertx);
+  }
 
 }

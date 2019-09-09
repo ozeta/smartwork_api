@@ -2,27 +2,13 @@ package dev.oz.smartworkapi.repository;
 
 import dev.oz.smartworkapi.dto.Request;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
-
-import java.util.function.Function;
 
 public interface IRequest {
 
 
+  Future<Request> getRequest(int result_id);
+  Future<Integer> deleteRequest(int id);
+  Future<Request> putRequest(Request request);
+  Future<Request> postRequest(Request request);
 
-
-  class RequestRepositoryException extends Exception {
-  }
-
-  class DeleteRequestRepositoryException extends RequestRepositoryException {
-  }
-
-  class PutRequestRepositoryException extends RequestRepositoryException {
-  }
-
-  class PostRequestRepositoryException extends RequestRepositoryException {
-  }
-
-  class GetRequestRepositoryException extends RequestRepositoryException {
-  }
 }

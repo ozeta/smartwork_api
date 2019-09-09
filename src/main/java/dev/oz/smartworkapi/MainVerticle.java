@@ -13,7 +13,7 @@ public class MainVerticle extends AbstractVerticle {
   private static Logger logger = LoggerFactory.getLogger(MainVerticle.class);
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    ApplicationBootstrapper.start(startPromise);
+    ApplicationBootstrapper.start(startPromise, getVertx());
   }
 
   @Override

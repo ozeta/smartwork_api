@@ -7,6 +7,8 @@ plugins {
 group = 'dev.oz'
 version = '1.0.0-SNAPSHOT'
 
+ext.moduleName = 'dev.oz.smartworkapi'
+
 repositories {
   maven {
     url 'https://oss.sonatype.org/content/repositories/snapshots'
@@ -76,6 +78,36 @@ test {
   }
 }
 
+afterEvaluate {
+  compileJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+      options.compilerArgs = [
+        '--module-path', classpath.asPath,
+      ]
+      classpath = files()
+    }
+  }
+}
 run {
+  inputs.property("moduleName", moduleName)
+  doFirst {
+    jvmArgs = [
+      '--module-path', classpath.asPath,
+      '--module', mainClassName
+    ]
+    classpath = files()
+  }
   args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+}
+
+startScripts {
+  inputs.property("moduleName", moduleName)
+  doFirst {
+    classpath = files()
+    defaultJvmOpts = [
+      '--module-path', 'APP_HOME_LIBS',
+      '--module', mainClassName
+    ]
+  }
 }

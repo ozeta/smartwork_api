@@ -95,21 +95,4 @@ public class RequestMysqlVerticle extends AbstractVerticle {
   @Override
   public void stop() {
   }
-
-
-  void getRequest(int result_id) {
-
-  }
-
-  void deleteRequest(int id) {
-
-  }
-
-  void putRequest(Request request) {
-
-  }
-
-  void postRequest(Request request) {
-
-  }
 }
