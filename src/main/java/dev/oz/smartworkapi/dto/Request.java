@@ -107,4 +107,15 @@ public class Request {
     }
 
   }
+
+  @Override
+  public String toString() {
+    return "Request{" +
+      "id=" + id +
+      ", user='" + user + '\'' +
+      ", approver='" + approver + '\'' +
+      ", date=" + date +
+      ", status=" + status +
+      '}';
+  }
 }
